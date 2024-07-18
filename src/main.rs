@@ -5,9 +5,11 @@ use bevy::sprite::MaterialMesh2dBundle;
 
 use crate::constants::*;
 use crate::board::*;
+use crate::pieces::*;
 
 mod constants;
 mod board;
+mod pieces;
 
 
 fn camera_setup(mut commands: Commands) {
@@ -25,6 +27,10 @@ fn main() {
         }),
         ..default()
     }))
-    .add_systems(Startup, (camera_setup, grid_maker))
+    .add_systems(Startup, (
+        camera_setup,
+        grid_maker,
+        spawn_piece,
+    ))
     .run();
 }

@@ -1,16 +1,22 @@
 
 use bevy::prelude::*;
-use bevy::color::palettes::basic::{WHITE, BLUE};
+use bevy::color::palettes::basic::{SILVER, BLUE};
 use bevy::sprite::MaterialMesh2dBundle;
 use crate::constants::*;
 
 #[derive(Component)]
-struct Square(String);
+pub struct Square {
+    pub name: String,
+}
 
 
-fn coord_maker(x: f32, y: f32) -> Vec3 {
-    // reduce x and y coords by the size of the board
+pub fn coord_maker(x: f32, y: f32) -> Vec3 {
     Vec3::new(x - DISPLACEMENT, y - DISPLACEMENT, Z)
+}
+
+pub fn coord_maker_piece(x: f32, y: f32) -> Vec3 {
+    // Add one to z layer for the pieces
+    Vec3::new(x - DISPLACEMENT, y - DISPLACEMENT, Z + 1.)
 }
 
 pub fn get_square_name(mut rank_num: i32, mut file_num: i32) -> Result<String, &'static str> {
@@ -70,7 +76,7 @@ pub fn grid_maker(
         let color = if (coord_index[0] + coord_index[1]) % 2 == 0 {
             Color::from(BLUE)
         } else {
-            Color::from(WHITE)
+            Color::from(SILVER)
         };
 
         commands.spawn(MaterialMesh2dBundle {
@@ -83,7 +89,7 @@ pub fn grid_maker(
             material: materials.add(color),
             ..default()
         })
-        .insert(Square(square_name));
+        .insert(Square{ name: square_name });
 
     }
 }
