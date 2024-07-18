@@ -14,7 +14,7 @@ const DISPLACEMENT: f32 = 0.5 * (WINDOW_SIZE - SQUARE_SIZE);
 ///////////////////////////
 
 #[derive(Component)]
-struct Square;
+struct Square(String);
 
 fn coord_maker(x: f32, y: f32) -> Vec3 {
     // reduce x and y coords by the size of the board
@@ -23,6 +23,37 @@ fn coord_maker(x: f32, y: f32) -> Vec3 {
 
 fn camera_setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
+}
+
+fn get_square_name(mut rank_num: i32, mut file_num: i32) -> Result<String, &'static str> {
+    rank_num = rank_num % 8;
+    file_num = file_num % 8;
+    let rank = match rank_num {
+        0 => "1",
+        1 => "2",
+        2 => "3",
+        3 => "4",
+        4 => "5",
+        5 => "6",
+        6 => "7",
+        7 => "7",
+        _ => return Err("invalid rank!") // not possible...
+    };
+
+    let mut file = match file_num {
+        0 => String::from("A"),
+        1 => String::from("B"),
+        2 => String::from("C"),
+        3 => String::from("D"),
+        4 => String::from("E"),
+        5 => String::from("F"),
+        6 => String::from("G"),
+        7 => String::from("H"),
+        _ => return Err("invalid rank!")
+    };
+
+    file.push_str(rank);
+    Ok(String::from(file))
 }
 
 fn grid_maker(
@@ -40,8 +71,13 @@ fn grid_maker(
     }
 
     for coord_index in coord_indices {
-        let i = coord_index[0] as f32 * SQUARE_SIZE;
-        let j = coord_index[1] as f32 * SQUARE_SIZE;
+        let i = coord_index[0];
+        let j = coord_index[1];
+        let i_scaled = i as f32 * SQUARE_SIZE;
+        let j_scaled = j as f32 * SQUARE_SIZE;
+
+        // this should never give an err
+        let square_name = get_square_name(i, j).unwrap();
 
         let color = if (coord_index[0] + coord_index[1]) % 2 == 0 {
             Color::from(BLUE)
@@ -52,14 +88,14 @@ fn grid_maker(
         commands.spawn(MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::default()).into(),
             transform: Transform {
-                translation: coord_maker(i, j),
+                translation: coord_maker(i_scaled, j_scaled),
                 scale: Vec3::new(SQUARE_SIZE, SQUARE_SIZE, Z),
                 ..default()
             },
             material: materials.add(color),
             ..default()
         })
-        .insert(Square);
+        .insert(Square(square_name));
 
     }
 
