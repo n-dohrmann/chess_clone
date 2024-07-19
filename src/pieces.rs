@@ -2,6 +2,7 @@
 use bevy::prelude::*;
 use crate::{constants::*, coord_maker_piece};
 
+#[derive(Debug)]
 pub enum PieceType {
     Pawn,
     Knight,
@@ -11,18 +12,19 @@ pub enum PieceType {
     King,
 }
 
+#[derive(Debug)]
 pub enum PieceColor {
     White,
     Black,
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Piece {
     ptype: PieceType,
     color: PieceColor,
 }
 
-pub fn piece_asset_path(piece: Piece) -> String {
+pub fn piece_asset_path(piece: &Piece) -> String {
     let mut path = String::new();
 
     match piece.color {
@@ -37,22 +39,18 @@ pub fn piece_asset_path(piece: Piece) -> String {
         PieceType::Queen => path.push_str("queen.png"),
         PieceType::King => path.push_str("king.png")
     }
-
     path
 }
 
+/// Spawns all 32 Chess pieces.
 pub fn spawn_pieces(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    // will spawn all 32 pieces...
     let piece_ranks = vec![0, 1, 6, 7];
 
     for rank in piece_ranks {
         for file in 0..NUM_SQUARES {
-            let rank_coord = SQUARE_SIZE * rank as f32;
-            let file_coord = SQUARE_SIZE * file as f32;
-
             let (piece_type, piece_color) = match (rank, file) {
                 (1, _) => (PieceType::Pawn, PieceColor::White),
                 (6, _) => (PieceType::Pawn, PieceColor::Black),
@@ -79,6 +77,8 @@ pub fn spawn_pieces(
                 color: piece_color,
             };
 
+            let rank_coord = SQUARE_SIZE * (rank as f32);
+            let file_coord = SQUARE_SIZE * (file as f32);
             let piece_coords = coord_maker_piece(file_coord, rank_coord);
             spawn_single_piece(&mut commands,
                 &asset_server,
@@ -98,7 +98,8 @@ pub fn spawn_single_piece(
     piece_coords: Vec3
 ) {
 
-    let asset_path = piece_asset_path(piece);
+    let asset_path = piece_asset_path(&piece);
+    //println!("Spawning: {:?} at {:?}", piece, piece_coords);
 
     // just testing pawn placement
     commands.spawn(SpriteBundle {
@@ -114,8 +115,6 @@ pub fn spawn_single_piece(
             ..default()
         },
         ..default()
-    });
-    //.insert(piece);
-
-
+    })
+    .insert(piece);
 }
