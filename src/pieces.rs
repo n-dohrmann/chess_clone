@@ -120,7 +120,7 @@ pub fn spawn_single_piece(
 }
 
 /// Can't make an official test since it requires args
-pub fn _test_query_pieces(query: Query<&Piece>) {
+pub fn test_query_pieces(query: Query<&Piece>) {
     // verify white pieces
     let white_pieces = pieces_by_color(&query, PieceColor::White);
     for piece in white_pieces {
@@ -136,14 +136,10 @@ pub fn _test_query_pieces(query: Query<&Piece>) {
 
 pub fn pieces_by_color<'a>(
     query: &'a Query<&Piece>,
-    color: PieceColor) -> Vec<&'a Piece>
-{
-    let mut pieces: Vec<&Piece> = Vec::new();
-
-    for piece in query.iter() {
-        if piece.color == color {
-            pieces.push(piece);
-        }
-    }
-    pieces
+    color: PieceColor
+) -> Vec<&'a Piece> {
+    query
+        .iter()
+        .filter(|piece| piece.color == color)
+        .collect::<Vec<&'a Piece>>()
 }

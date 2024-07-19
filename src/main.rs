@@ -30,6 +30,7 @@ fn main() {
         camera_setup,
         grid_maker,
         spawn_pieces,
+        test_query_pieces.after(spawn_pieces),
     ))
     .run();
 }
