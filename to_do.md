@@ -5,11 +5,9 @@
 - Board generation
 - Piece spawn
 - Piece assets
-
+- check piece query, add way to query by color as well
 
 ## To Do
-
-- check piece query, add way to query by color as well
 - add game state of which player's turn it is
 - piece selection
 - piece move generation

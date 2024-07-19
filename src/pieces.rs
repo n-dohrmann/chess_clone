@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use crate::{constants::*, coord_maker_piece};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum PieceType {
     Pawn,
     Knight,
@@ -12,7 +12,7 @@ pub enum PieceType {
     King,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum PieceColor {
     White,
     Black,
@@ -117,4 +117,33 @@ pub fn spawn_single_piece(
         ..default()
     })
     .insert(piece);
+}
+
+/// Can't make an official test since it requires args
+pub fn _test_query_pieces(query: Query<&Piece>) {
+    // verify white pieces
+    let white_pieces = pieces_by_color(&query, PieceColor::White);
+    for piece in white_pieces {
+        println!("Found: {:?}", piece);
+    }
+    println!("~~~~~~~~");
+    // verify black pieces 
+    let black_pieces = pieces_by_color(&query, PieceColor::Black);
+    for piece in black_pieces {
+        println!("Found: {:?}", piece);
+    }
+}
+
+pub fn pieces_by_color<'a>(
+    query: &'a Query<&Piece>,
+    color: PieceColor) -> Vec<&'a Piece>
+{
+    let mut pieces: Vec<&Piece> = Vec::new();
+
+    for piece in query.iter() {
+        if piece.color == color {
+            pieces.push(piece);
+        }
+    }
+    pieces
 }
