@@ -5,10 +5,12 @@ use bevy::prelude::*;
 use crate::constants::*;
 use crate::board::*;
 use crate::pieces::*;
+use crate::game_logic::*;
 
 mod constants;
 mod board;
 mod pieces;
+mod game_logic;
 
 
 fn camera_setup(mut commands: Commands) {
@@ -26,11 +28,11 @@ fn main() {
         }),
         ..default()
     }))
+    .insert_resource(GameState::White)
     .add_systems(Startup, (
         camera_setup,
         grid_maker,
         spawn_pieces,
-        test_query_pieces.after(spawn_pieces),
     ))
     .run();
 }

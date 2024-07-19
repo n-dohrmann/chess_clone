@@ -120,7 +120,7 @@ pub fn spawn_single_piece(
 }
 
 /// Can't make an official test since it requires args
-pub fn test_query_pieces(query: Query<&Piece>) {
+pub fn _test_query_pieces(query: Query<&Piece>) {
     // verify white pieces
     let white_pieces = pieces_by_color(&query, PieceColor::White);
     for piece in white_pieces {
