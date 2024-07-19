@@ -1,8 +1,6 @@
 
 
 use bevy::prelude::*;
-use crate::pieces::*;
-use crate::constants::*;
 
 
 #[derive(Resource, Debug)]

@@ -72,14 +72,15 @@ pub fn spawn_pieces(
                 }
             };
 
+            let rank_coord = SQUARE_SIZE * (rank as f32);
+            let file_coord = SQUARE_SIZE * (file as f32);
+            let piece_coords = coord_maker_piece(file_coord, rank_coord);
+
             let piece = Piece {
                 ptype:  piece_type,
                 color: piece_color,
             };
 
-            let rank_coord = SQUARE_SIZE * (rank as f32);
-            let file_coord = SQUARE_SIZE * (file as f32);
-            let piece_coords = coord_maker_piece(file_coord, rank_coord);
             spawn_single_piece(&mut commands,
                 &asset_server,
                 piece,
@@ -120,26 +121,26 @@ pub fn spawn_single_piece(
 }
 
 /// Can't make an official test since it requires args
-pub fn _test_query_pieces(query: Query<&Piece>) {
+pub fn _test_query_pieces(query: Query<(&Piece, &Transform)>) {
     // verify white pieces
     let white_pieces = pieces_by_color(&query, PieceColor::White);
-    for piece in white_pieces {
-        println!("Found: {:?}", piece);
+    for (piece, transform) in white_pieces {
+        println!("Found: {:?} at {:?}", piece, transform.translation);
     }
     println!("~~~~~~~~");
     // verify black pieces 
     let black_pieces = pieces_by_color(&query, PieceColor::Black);
-    for piece in black_pieces {
-        println!("Found: {:?}", piece);
+    for (piece, transform) in black_pieces {
+        println!("Found: {:?} at {:?}", piece, transform.translation);
     }
 }
 
 pub fn pieces_by_color<'a>(
-    query: &'a Query<&Piece>,
+    query: &'a Query<(&Piece, &Transform)>,
     color: PieceColor
-) -> Vec<&'a Piece> {
+) -> Vec<(&'a Piece, &'a Transform)> {
     query
         .iter()
-        .filter(|piece| piece.color == color)
-        .collect::<Vec<&'a Piece>>()
+        .filter(|(piece, _transform)| piece.color == color)
+        .collect::<Vec<(&'a Piece, &Transform)>>()
 }

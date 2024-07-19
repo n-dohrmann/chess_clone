@@ -6,11 +6,13 @@ use crate::constants::*;
 use crate::board::*;
 use crate::pieces::*;
 use crate::game_logic::*;
+use crate::mouse_input::*;
 
 mod constants;
 mod board;
 mod pieces;
 mod game_logic;
+mod mouse_input;
 
 
 fn camera_setup(mut commands: Commands) {
@@ -33,6 +35,8 @@ fn main() {
         camera_setup,
         grid_maker,
         spawn_pieces,
+        _test_query_pieces.after(spawn_pieces),
     ))
+    .add_systems(Update, print_pos_when_clicked)
     .run();
 }
