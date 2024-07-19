@@ -1,7 +1,6 @@
 
 use bevy::prelude::*;
 use crate::{constants::*, coord_maker_piece};
-use crate::board::{Square, coord_maker};
 
 pub enum PieceType {
     Pawn,
@@ -23,50 +22,100 @@ pub struct Piece {
     color: PieceColor,
 }
 
-pub fn spawn_piece(
+pub fn piece_asset_path(piece: Piece) -> String {
+    let mut path = String::new();
+
+    match piece.color {
+        PieceColor::White => path.push('w'),
+        PieceColor::Black => path.push('b'),
+    }
+    match piece.ptype {
+        PieceType::Pawn => path.push_str("pawn.png"),
+        PieceType::Knight => path.push_str("knight.png"),
+        PieceType::Bishop => path.push_str("bishop.png"),
+        PieceType::Rook => path.push_str("rook.png"),
+        PieceType::Queen => path.push_str("queen.png"),
+        PieceType::King => path.push_str("king.png")
+    }
+
+    path
+}
+
+pub fn spawn_pieces(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    //piece: Piece,
-    //square: Square
 ) {
-    //let square_name = square.name;
+    // will spawn all 32 pieces...
+    let piece_ranks = vec![0, 1, 6, 7];
 
-    //let texture: Handle<Image> = match piece.ptype {
-        //PieceType::Pawn => asset_server.load("assets/pbawn.png"),
-        //_ => asset_server.load("assets/bpawn.png"),
-    //};
+    for rank in piece_ranks {
+        for file in 0..NUM_SQUARES {
+            let rank_coord = SQUARE_SIZE * rank as f32;
+            let file_coord = SQUARE_SIZE * file as f32;
+
+            let (piece_type, piece_color) = match (rank, file) {
+                (1, _) => (PieceType::Pawn, PieceColor::White),
+                (6, _) => (PieceType::Pawn, PieceColor::Black),
+                (_other_rank, _other_file) => {
+                    let nested_type = match file {
+                        0 | 7 => PieceType::Rook,
+                        1 | 6 => PieceType::Knight,
+                        2 | 5 => PieceType::Bishop,
+                        3 => PieceType::Queen,
+                        4 => PieceType::King,
+                        _ => PieceType::King, // not possible
+                    };    
+                    let nested_color = match rank {
+                        0 | 1 => PieceColor::White,
+                        6 | 7 => PieceColor::Black,
+                        _ => PieceColor::White, // not possible
+                    };
+                    (nested_type, nested_color)
+                }
+            };
+
+            let piece = Piece {
+                ptype:  piece_type,
+                color: piece_color,
+            };
+
+            let piece_coords = coord_maker_piece(file_coord, rank_coord);
+            spawn_single_piece(&mut commands,
+                &asset_server,
+                piece,
+                piece_coords);
+
+        }
+    }
+
+    
+}
+
+pub fn spawn_single_piece(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    piece: Piece,
+    piece_coords: Vec3
+) {
+
+    let asset_path = piece_asset_path(piece);
 
     // just testing pawn placement
     commands.spawn(SpriteBundle {
-        texture: asset_server.load("bpawn.png"),
+        texture: asset_server.load(asset_path),
         sprite: Sprite {
             color: Color::srgb(5.0, 5.0, 5.0),
             custom_size: Some(Vec2::new(1.0, 1.0)), // in terms of square size??
             ..default()
         },
         transform: Transform {
-            translation: coord_maker_piece(0., 600.),
+            translation: piece_coords,
             scale: Vec3::new(SQUARE_SIZE, SQUARE_SIZE, Z + 1.),
             ..default()
         },
         ..default()
     });
-    //.insert(Piece);
-
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load("wpawn.png"),
-        sprite: Sprite {
-            color: Color::srgb(5.0, 5.0, 5.0),
-            custom_size: Some(Vec2::new(1.0, 1.0)), // in terms of square size??
-            ..default()
-        },
-        transform: Transform {
-            translation: coord_maker_piece(0., 100.),
-            scale: Vec3::new(SQUARE_SIZE, SQUARE_SIZE, Z + 1.),
-            ..default()
-        },
-        ..default()
-    });
+    //.insert(piece);
 
 
 }

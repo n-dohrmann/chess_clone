@@ -1,7 +1,6 @@
 
 
 use bevy::prelude::*;
-use bevy::sprite::MaterialMesh2dBundle;
 
 use crate::constants::*;
 use crate::board::*;
@@ -30,7 +29,7 @@ fn main() {
     .add_systems(Startup, (
         camera_setup,
         grid_maker,
-        spawn_piece,
+        spawn_pieces,
     ))
     .run();
 }
