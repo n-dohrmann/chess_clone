@@ -7,6 +7,7 @@
 - Piece assets
 - check piece query, add way to query by color as well
 - add game state of which player's turn it is
+- square selection
 
 ## To Do
 - piece selection
