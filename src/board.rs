@@ -4,10 +4,14 @@ use bevy::color::palettes::basic::{SILVER, BLUE};
 use bevy::sprite::MaterialMesh2dBundle;
 use crate::constants::*;
 
-#[derive(Component)]
+#[derive(Component, Debug, PartialEq)]
 pub struct Square {
     pub name: String,
+    pub color: Color,
 }
+
+#[derive(Component, Debug)]
+pub struct HighlightedSquare;
 
 
 pub fn coord_maker(x: f32, y: f32) -> Vec3 {
@@ -20,6 +24,8 @@ pub fn coord_maker_piece(x: f32, y: f32) -> Vec3 {
 }
 
 pub fn get_square_name(mut rank_num: i32, mut file_num: i32) -> Result<String, &'static str> {
+    //rank_num = 7  - (rank_num % 8);
+    //file_num = 7  - (file_num % 8);
     rank_num = rank_num % 8;
     file_num = file_num % 8;
     let rank = match rank_num {
@@ -30,7 +36,7 @@ pub fn get_square_name(mut rank_num: i32, mut file_num: i32) -> Result<String, &
         4 => "5",
         5 => "6",
         6 => "7",
-        7 => "7",
+        7 => "8",
         _ => return Err("invalid rank!") // not possible...
     };
 
@@ -71,7 +77,7 @@ pub fn grid_maker(
         let j_scaled = j as f32 * SQUARE_SIZE;
 
         // this should never give an err
-        let square_name = get_square_name(i, j).unwrap();
+        let square_name = get_square_name(j, i).unwrap();
 
         let color = if (coord_index[0] + coord_index[1]) % 2 == 0 {
             Color::from(BLUE)
@@ -89,7 +95,16 @@ pub fn grid_maker(
             material: materials.add(color),
             ..default()
         })
-        .insert(Square{ name: square_name });
+        .insert(Square{ 
+            name: square_name,
+            color: color,
+        });
 
     }
+}
+
+pub fn get_rkfl_from_coords(coords: Vec3) -> (i32, i32) {
+    let rank = ((coords.y + 350.) / 100.) as i32;
+    let file = ((coords.x + 350.) / 100.) as i32;
+    (rank, file)
 }

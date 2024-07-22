@@ -144,3 +144,12 @@ pub fn pieces_by_color<'a>(
         .filter(|(piece, _transform)| piece.color == color)
         .collect::<Vec<(&'a Piece, &Transform)>>()
 }
+
+pub fn _test_piece_movement(mut query: Query<(&Piece, &mut Transform)>) {
+    let e2_pos = Vec3::new(50.0, -250.0, 1.0);
+    for (_piece, mut transform) in query.iter_mut() {
+        if transform.translation == e2_pos {
+            transform.translation += Vec3::new(0.0, 200., 0.);
+        }
+    }
+}
