@@ -13,6 +13,18 @@ pub struct Square {
 #[derive(Component, Debug)]
 pub struct HighlightedSquare;
 
+#[derive(Resource, Debug)]
+pub struct Bins(pub Vec<f32>);
+
+impl Default for Bins {
+   fn default() -> Self {
+       let mut bins: Vec<f32> = Vec::new();
+       for i in 0..NUM_SQUARES {
+            bins.push(-350. + i as f32 * 100.);
+       }
+       Bins(bins)
+   } 
+}
 
 pub fn coord_maker(x: f32, y: f32) -> Vec3 {
     Vec3::new(x - DISPLACEMENT, y - DISPLACEMENT, Z)
@@ -107,4 +119,37 @@ pub fn get_rkfl_from_coords(coords: Vec3) -> (i32, i32) {
     let rank = ((coords.y + 350.) / 100.) as i32;
     let file = ((coords.x + 350.) / 100.) as i32;
     (rank, file)
+}
+
+/// Generate a coordinate (`Vec3`) corresponding to a square
+/// name. Ex. `"A1" -> Vec3::new(-350., -350., 1.0)`
+pub fn square_name_to_coords(square_name: &String) -> Vec3 {
+    let mut coords = Vec3::new(0., 0., 1.0);
+
+    let file: &str = &square_name[0..1];
+    let rank: &str = &square_name[1..2];
+
+    match file {
+        "A" => coords.x = -350.,
+        "B" => coords.x = -250.,
+        "C" => coords.x = -150.,
+        "D" => coords.x = -50.,
+        "E" => coords.x = 50.,
+        "F" => coords.x = 150.,
+        "G" => coords.x = 250.,
+        "H" => coords.x = 350.,
+        _ => coords.x = 350., // not possible
+    }
+    match rank {
+        "1" => coords.y = -350.,
+        "2" => coords.y = -250.,
+        "3" => coords.y = -150.,
+        "4" => coords.y = -50.,
+        "5" => coords.y = 50.,
+        "6" => coords.y = 150.,
+        "7" => coords.y = 250.,
+        "8" => coords.y = 350.,
+        _ => coords.y = 350., // not possible
+    }
+    coords
 }

@@ -34,6 +34,6 @@ fn main() {
         grid_maker,
         spawn_pieces,
     ))
-    .add_systems(Update, _test_highlight_when_clicked)
+    .add_systems(Update, square_selection_logic)
     .run();
 }

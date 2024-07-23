@@ -5,19 +5,6 @@ use crate::constants::*;
 use crate::board::*;
 use bevy::color::palettes::basic::RED;
 
-// using bins just in this file
-#[derive(Resource, Debug)]
-pub struct Bins(Vec<f32>);
-
-impl Default for Bins {
-   fn default() -> Self {
-       let mut bins: Vec<f32> = Vec::new();
-       for i in 0..NUM_SQUARES {
-            bins.push(-350. + i as f32 * 100.);
-       }
-       Bins(bins)
-   } 
-}
 
 pub fn print_name_when_clicked(
     q_windows: Query<&Window, With<PrimaryWindow>>,
@@ -48,7 +35,7 @@ pub fn get_name_clicked_square(
     get_square_name(rank, file).unwrap()
 }
 
-pub fn _test_highlight_when_clicked(
+pub fn square_selection_logic(
     query: Query<(Entity, &Square, &mut Handle<ColorMaterial>), Without<HighlightedSquare>>,
     mut hs_query: Query<(Entity, &Square, &mut Handle<ColorMaterial>), With<HighlightedSquare>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -73,7 +60,8 @@ pub fn _test_highlight_when_clicked(
             } else { // There is already a highlighted square
                 let (hs_entity, hs_square, hs_handle) = hs_query.single_mut();
 
-                let mut found = false;
+                // Is the selected square different from the highlighted square?
+                let mut new_square = false;
 
                 for (entity, square, handle) in query.iter() {
                     if square.name == name {
@@ -85,12 +73,11 @@ pub fn _test_highlight_when_clicked(
                         color_mat_hs.color = hs_square.color;
                         commands.entity(hs_entity).remove::<HighlightedSquare>();
                         commands.entity(entity).insert(HighlightedSquare);
-                        found = true;
+                        new_square = true;
                         break;
                         }
                 }
-                if !found {
-                    // Set color to original and turn off highlighting
+                if !new_square { // Turn off the highlighted square
                     let color_mat_hs = materials
                         .get_mut(hs_handle.as_ref())
                         .unwrap();
