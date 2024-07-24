@@ -1,6 +1,6 @@
 
 use bevy::prelude::*;
-use crate::{constants::*, coord_maker_piece, get_square_name};
+use crate::{constants::*, coord_maker_piece, get_square_name, MoveContext};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum PieceType {
@@ -66,7 +66,7 @@ pub fn spawn_pieces(
                         3 => PieceType::Queen,
                         4 => PieceType::King,
                         _ => PieceType::King, // not possible
-                    };    
+                    };
                     let nested_color = match rank {
                         0 | 1 => PieceColor::White,
                         6 | 7 => PieceColor::Black,
@@ -82,7 +82,6 @@ pub fn spawn_pieces(
             let square_name = get_square_name(rank, file)
                 .unwrap();
 
-            
             let piece = Piece {
                 ptype,
                 color,
@@ -97,7 +96,6 @@ pub fn spawn_pieces(
         }
     }
 
-    
 }
 
 pub fn spawn_single_piece(
@@ -136,7 +134,7 @@ pub fn _test_query_pieces(query: Query<(Entity, &Piece, &Transform), Without<Hig
         println!("Found: {:?} at {:?}", piece, transform.translation);
     }
     println!("~~~~~~~~");
-    // verify black pieces 
+    // verify black pieces
     let black_pieces = pieces_by_color(&query, PieceColor::Black);
     for (_entity, piece, transform) in black_pieces {
         println!("Found: {:?} at {:?}", piece, transform.translation);
@@ -166,7 +164,7 @@ pub fn _test_piece_movement(mut query: Query<(&Piece, &mut Transform)>) {
 pub fn generate_moves(
     selected_piece: &Piece,
     pieces_query: Query<&Piece, Without<HighlightedPiece>>
-) -> Vec<String> {
+) -> Vec<(String, Option<MoveContext>)> {
     let other_pieces: Vec<&Piece> = pieces_query.iter().collect();
 
     match selected_piece.ptype {
@@ -179,43 +177,76 @@ pub fn generate_moves(
     }
 }
 
+/// Generate the raw moveset for a pawn. Includes double movement
+/// and capturing, but not en-passant at the moment.
+pub fn pawn_move_helper(file: char, next_rank: i32) {
+
+}
+
 /// Generates possible moves for a selected Pawn
-pub fn pawn_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+/// No en passant at the moment
+pub fn pawn_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
+
+    let file = piece.square_name.chars().next().unwrap();
+    let rank = piece.square_name[1..2].parse::<i32>().unwrap();
+
+    let join = |f: String, r: i32| {
+        format!("{f}{r}")
+    };
+
+    match piece.color {
+        PieceColor::White => {
+            let next_rank = rank + 1;
+            
+            for other_piece in other_pieces {
+
+            }
+
+        },
+        PieceColor::Black => {
+            let next_rank = rank - 1;
+        }
+    }
 
     moves
 }
 
 /// Generates possible moves for a selected Knight
-pub fn knight_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+pub fn knight_moves(piece: &Piece, other_pieces: Vec<&Piece>)
+-> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
 
     moves
 }
 
 /// Generates possible moves for a selected Bishop
-pub fn bishop_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+pub fn bishop_moves(piece: &Piece, other_pieces: Vec<&Piece>)
+-> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
 
     moves
 }
 
 /// Generates possible moves for a selected Rook
-pub fn rook_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+pub fn rook_moves(piece: &Piece, other_pieces: Vec<&Piece>)
+-> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
 
     moves
 }
 
 /// Generates possible moves for a selected Queen
-pub fn queen_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+pub fn queen_moves(piece: &Piece, other_pieces: Vec<&Piece>)
+-> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
 
     moves
 }
 
 /// Generates possible moves for a selected King
-pub fn king_moves(piece: &Piece, other_pieces: Vec<&Piece>) -> Vec<String> {
+pub fn king_moves(piece: &Piece, other_pieces: Vec<&Piece>)
+-> Vec<(String, Option<MoveContext>)> {
     let mut moves = Vec::new();
 
     moves

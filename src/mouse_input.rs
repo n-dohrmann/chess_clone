@@ -82,7 +82,7 @@ pub fn square_selection_logic(
                         .get_mut(hs_handle.as_ref())
                         .unwrap();
                     color_mat_hs.color = Color::from(hs_square.color);
-                    commands.entity(hs_entity).remove::<HighlightedSquare>(); 
+                    commands.entity(hs_entity).remove::<HighlightedSquare>();
                 }
             }
         }
@@ -107,7 +107,7 @@ pub fn piece_to_window_position(piece_position: Vec2) -> Vec3 {
 pub fn coordinate_clamp(raw_position: Vec3, bins: &Res<Bins>) -> Vec3 {
     let mut adj_x = raw_position.x;
     let mut adj_y = raw_position.y;
-    
+
     for bin in &bins.0[..] {
         if adj_x < *bin {
             adj_x = *bin - 100.;

@@ -11,6 +11,13 @@ pub enum GameState {
     Black,
 }
 
+#[derive(Debug)]
+pub enum MoveContext {
+    Capture,
+    Promotion,
+    EnPassant,
+}
+
 pub fn toggle_game_state(mut state: ResMut<GameState>) {
     match state.as_mut() {
         GameState::White => *state = GameState::Black,
@@ -54,6 +61,9 @@ pub fn piece_selection_logic(
         } else { // There was already a selected piece
             let (hl_entity, hl_piece, hl_transform) = hl_piece_query.single_mut();
 
+            // TODO: need to fix logic in this branch. I.e. if we select a non-valid square we
+            // should still de-select the selected piece
+
             for (entity, piece, transform) in active_pieces {
                 if piece.square_name == name {
                     // Change the selected piece to the new piece
@@ -65,7 +75,7 @@ pub fn piece_selection_logic(
             }
 
             // Generate current possible move squares and compare to
-            // the clicked square
+            // the clicked square, move if valid.
 
         }
     }

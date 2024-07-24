@@ -23,7 +23,7 @@ impl Default for Bins {
             bins.push(-350. + i as f32 * 100.);
        }
        Bins(bins)
-   } 
+   }
 }
 
 pub fn coord_maker(x: f32, y: f32) -> Vec3 {
@@ -107,7 +107,7 @@ pub fn grid_maker(
             material: materials.add(color),
             ..default()
         })
-        .insert(Square{ 
+        .insert(Square{
             name: square_name,
             color: color,
         });
